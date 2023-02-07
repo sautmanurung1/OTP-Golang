@@ -40,12 +40,14 @@ func ValidateOTP(otp string, now time.Time) error {
 
 	// Check if the OTP has expired
 	expiry := now.Add(-OTPExpiry)
-	if now.Before(expiry) {
+	otps, _ := GenerateOTP(expiry)
+	if otp == otps {
+		return nil
+	} else if now.Before(expiry) {
 		return &OTPError{"Expired"}
+	} else {
+		return &OTPError{"Invalid the code OTP"}
 	}
-
-	return nil
-
 }
 
 func main() {
@@ -66,9 +68,9 @@ func main() {
 		// Validate the OTP
 		err = ValidateOTP(inputOTP, now)
 		if err == nil {
-			fmt.Println("OTP is valid")
-		} else {
 			fmt.Println("OTP is invalid")
+		} else {
+			fmt.Println("OTP is valid")
 		}
 	}
 
